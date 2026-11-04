@@ -12,13 +12,15 @@ type RouteContext = {
 
 const allowedMethods = new Set(["GET", "POST", "PATCH", "DELETE"]);
 
-function isAllowedAdminPath(path: string[]): boolean {
+function isAllowedAdminPath(path: string[], method: string): boolean {
   if (path.length === 1 && path[0] === "dashboard") return true;
   if (path[0] === "reports") {
     return (
       path.length === 1 ||
       (path.length === 2 && /^\d+$/.test(path[1])) ||
-      (path.length === 3 && /^\d+$/.test(path[1]) && path[2] === "status")
+      (path.length === 3 &&
+        /^\d+$/.test(path[1]) &&
+        (path[2] === "status" || (path[2] === "classify" && method === "POST")))
     );
   }
   if (path[0] === "users") {
@@ -36,7 +38,7 @@ async function proxyAdminRequest(request: Request, context: RouteContext) {
   }
 
   const { path } = await context.params;
-  if (!isAllowedAdminPath(path)) {
+  if (!isAllowedAdminPath(path, request.method)) {
     return NextResponse.json({ message: "Endpoint admin tidak ditemukan." }, { status: 404 });
   }
 

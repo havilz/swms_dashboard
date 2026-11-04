@@ -7,6 +7,7 @@ import { requireAdminSession } from "@/features/auth/infrastructure/admin-sessio
 import { getAdminReport } from "@/features/reports/infrastructure/reports-api";
 import { ReportStatusForm } from "@/features/reports/components/report-status-form";
 import { ReportImagePreview } from "@/features/reports/components/report-image-preview";
+import { ReportClassification } from "@/features/reports/components/report-classification";
 
 export const metadata: Metadata = {
   title: "Detail laporan | SWMS Admin",
@@ -84,11 +85,14 @@ export default async function ReportDetailPage({ params }: PageProps<"/reports/[
                 {report.imageUrl && (
                   <div className="sm:col-span-2">
                     <dt className="text-xs text-slate-500">Foto laporan</dt>
-                    <dd className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white p-2">
-                      <ReportImagePreview
-                        src={`/api/admin/reports/${report.id}/image`}
-                        alt={`Foto laporan: ${report.title}`}
-                      />
+                    <dd className="mt-2 rounded-xl border border-slate-200 bg-white p-2">
+                      <div className="overflow-hidden rounded-lg">
+                        <ReportImagePreview
+                          src={`/api/admin/reports/${report.id}/image`}
+                          alt={`Foto laporan: ${report.title}`}
+                        />
+                      </div>
+                      <ReportClassification reportId={report.id} />
                     </dd>
                   </div>
                 )}

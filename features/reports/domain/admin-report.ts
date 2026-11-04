@@ -2,6 +2,15 @@ import { isRecord } from "@/features/auth/domain/admin-user";
 
 export const reportStatuses = ["pending", "in_progress", "completed", "rejected"] as const;
 export type ReportStatus = (typeof reportStatuses)[number];
+export const wasteCategories = ["Organic Waste", "Plastic Waste", "Paper Waste"] as const;
+export type WasteCategory = (typeof wasteCategories)[number];
+
+export type WasteClassification = {
+  predictedClass: WasteCategory;
+  confidence: number;
+  probabilities: Record<WasteCategory, number>;
+  modelVersion: string;
+};
 
 export type AdminReport = {
   id: number;
@@ -26,6 +35,10 @@ export type Pagination = {
 
 function isReportStatus(value: unknown): value is ReportStatus {
   return typeof value === "string" && reportStatuses.some((status) => status === value);
+}
+
+function isWasteCategory(value: unknown): value is WasteCategory {
+  return typeof value === "string" && wasteCategories.some((category) => category === value);
 }
 
 export function parseAdminReport(value: unknown): AdminReport | null {
@@ -81,5 +94,48 @@ export function parsePagination(value: unknown): Pagination | null {
     lastPage: lastPage as number,
     perPage: perPage as number,
     total: total as number,
+  };
+}
+
+export function parseWasteClassification(value: unknown): WasteClassification | null {
+  if (!isRecord(value) || !isRecord(value.probabilities)) return null;
+
+  const { predicted_class: predictedClass, confidence, model_version: modelVersion } = value;
+  if (
+    !isWasteCategory(predictedClass) ||
+    typeof confidence !== "number" ||
+    !Number.isFinite(confidence) ||
+    confidence < 0 ||
+    confidence > 1 ||
+    typeof modelVersion !== "string" ||
+    modelVersion.length === 0 ||
+    modelVersion.length > 100 ||
+    Object.keys(value.probabilities).length !== wasteCategories.length
+  ) {
+    return null;
+  }
+
+  const probabilities = {} as Record<WasteCategory, number>;
+  for (const category of wasteCategories) {
+    const probability = value.probabilities[category];
+    if (
+      typeof probability !== "number" ||
+      !Number.isFinite(probability) ||
+      probability < 0 ||
+      probability > 1
+    ) {
+      return null;
+    }
+    probabilities[category] = probability;
+  }
+  if (Math.abs(Object.values(probabilities).reduce((sum, probability) => sum + probability, 0) - 1) > 0.01) {
+    return null;
+  }
+
+  return {
+    predictedClass,
+    confidence,
+    probabilities,
+    modelVersion,
   };
 }

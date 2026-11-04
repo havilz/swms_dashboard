@@ -18,12 +18,18 @@ Endpoint di bawah relatif terhadap base URL tersebut. Kontrak lengkap ada di [do
 | Ringkasan dashboard | `GET /admin/dashboard` |
 | Daftar laporan | `GET /admin/reports` |
 | Detail laporan | `GET /admin/reports/{report}` |
+| Saran klasifikasi foto laporan | `POST /admin/reports/{report}/classify` |
 | Ubah status/catatan | `PATCH /admin/reports/{report}/status` |
 | Hapus laporan | `DELETE /admin/reports/{report}` |
 | Daftar/buat user | `GET/POST /admin/users` |
 | Detail/edit/hapus user | `GET/PATCH/DELETE /admin/users/{user}` |
 
 Admin API memerlukan Sanctum bearer token dari login admin. User non-admin menerima `403`; token tidak valid atau tidak ada menerima `401`. Filter laporan/user, pagination, field request/response, dan status workflow mengikuti dokumentasi backend.
+
+Klasifikasi foto diminta secara eksplisit dari detail laporan. BFF dashboard
+meneruskan request melalui Laravel; browser tidak menerima token service model
+atau memanggil service model secara langsung. Hasil hanya ditampilkan sebagai
+saran sementara untuk admin dan tidak mengubah data/status laporan.
 
 ## Persyaratan request
 
