@@ -41,18 +41,33 @@ function isWasteCategory(value: unknown): value is WasteCategory {
   return typeof value === "string" && wasteCategories.some((category) => category === value);
 }
 
+function parseCoordinate(value: unknown, minimum: number, maximum: number): string | null | undefined {
+  if (value === null) return null;
+  if ((typeof value !== "string" && typeof value !== "number") || (typeof value === "string" && value.trim() === "")) {
+    return undefined;
+  }
+
+  const coordinate = Number(value);
+  if (!Number.isFinite(coordinate) || coordinate < minimum || coordinate > maximum) {
+    return undefined;
+  }
+  return String(coordinate);
+}
+
 export function parseAdminReport(value: unknown): AdminReport | null {
   if (!isRecord(value) || !isRecord(value.user)) return null;
 
   const { id, title, description, location_address, latitude, longitude, image_url, status, admin_notes, created_at } = value;
+  const parsedLatitude = parseCoordinate(latitude, -90, 90);
+  const parsedLongitude = parseCoordinate(longitude, -180, 180);
   const { id: userId, name, email } = value.user;
   if (
     typeof id !== "number" ||
     typeof title !== "string" ||
     typeof description !== "string" ||
     typeof location_address !== "string" ||
-    (latitude !== null && typeof latitude !== "string") ||
-    (longitude !== null && typeof longitude !== "string") ||
+    parsedLatitude === undefined ||
+    parsedLongitude === undefined ||
     (image_url !== null && typeof image_url !== "string") ||
     !isReportStatus(status) ||
     (admin_notes !== null && typeof admin_notes !== "string") ||
@@ -69,8 +84,8 @@ export function parseAdminReport(value: unknown): AdminReport | null {
     title,
     description,
     locationAddress: location_address,
-    latitude,
-    longitude,
+    latitude: parsedLatitude,
+    longitude: parsedLongitude,
     imageUrl: image_url,
     status,
     adminNotes: admin_notes,

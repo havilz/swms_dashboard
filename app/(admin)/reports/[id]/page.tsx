@@ -54,6 +54,11 @@ export default async function ReportDetailPage({ params }: PageProps<"/reports/[
   }
 
   const { report } = result;
+  const locationUrl =
+    report.latitude !== null && report.longitude !== null
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${report.latitude},${report.longitude}`)}`
+      : null;
+
   return (
       <div className="mx-auto max-w-5xl space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -72,7 +77,20 @@ export default async function ReportDetailPage({ params }: PageProps<"/reports/[
               <dl className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
                   <dt className="text-xs text-slate-500">Lokasi</dt>
-                  <dd className="mt-1 text-sm text-slate-800">{report.locationAddress}</dd>
+                  <dd className="mt-1 text-sm text-slate-800">
+                    {locationUrl ? (
+                      <a
+                        href={locationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-emerald-800 underline decoration-emerald-300 underline-offset-2 hover:text-emerald-900 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                      >
+                        {report.locationAddress}
+                      </a>
+                    ) : (
+                      report.locationAddress
+                    )}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-xs text-slate-500">Tanggal masuk</dt>
