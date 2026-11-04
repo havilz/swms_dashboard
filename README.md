@@ -56,9 +56,15 @@ Buat `.env.local` berdasarkan `.env.example`:
 
 ```env
 SWMS_API_BASE_URL=http://localhost:8000/api/v1
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=swms
+R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+R2_PUBLIC_URL=https://<public-bucket-domain>
 ```
 
 `SWMS_API_BASE_URL` adalah base URL backend API dan harus menggunakan protokol `http` atau `https`.
+Kredensial R2 digunakan hanya oleh server Next.js untuk mengambil preview foto laporan dan tidak boleh menggunakan prefix `NEXT_PUBLIC_`. Di Vercel, atur kelima variabel R2 di Project Settings → Environment Variables. `R2_PUBLIC_URL` harus sama dengan base URL yang dipakai backend untuk membentuk URL foto pada laporan.
 
 Contoh di atas hanya menunjukkan format konfigurasi. Gunakan URL environment masing-masing saat menjalankan aplikasi.
 
@@ -107,6 +113,7 @@ Dashboard menggunakan base URL dari `SWMS_API_BASE_URL` dan mengakses resource b
 - `admin/reports/{id}` untuk detail laporan.
 - `admin/reports/{id}/status` untuk memperbarui status dan catatan admin.
 - `admin/users` untuk daftar dan filter pengguna.
+- `/api/admin/reports/{id}/image` untuk mengambil foto laporan melalui server dashboard setelah memvalidasi sesi admin dan akses laporan di backend.
 
 Semua request admin dikirim dari server dengan header `Authorization` yang berasal dari sesi aktif. Browser berkomunikasi dengan route aplikasi pada origin dashboard.
 

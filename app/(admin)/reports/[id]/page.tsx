@@ -86,7 +86,7 @@ export default async function ReportDetailPage({ params }: PageProps<"/reports/[
                     <dt className="text-xs text-slate-500">Foto laporan</dt>
                     <dd className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white p-2">
                       <Image
-                        src={report.imageUrl}
+                        src={`/api/admin/reports/${report.id}/image`}
                         alt={`Foto laporan: ${report.title}`}
                         width={1200}
                         height={900}
