@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { StatusBadge } from "@/components/global/ui/status-badge";
@@ -83,15 +84,15 @@ export default async function ReportDetailPage({ params }: PageProps<"/reports/[
                 {report.imageUrl && (
                   <div className="sm:col-span-2">
                     <dt className="text-xs text-slate-500">Foto laporan</dt>
-                    <dd className="mt-2">
-                      <a
-                        href={report.imageUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-medium text-emerald-800 underline underline-offset-4"
-                      >
-                        Buka foto laporan
-                      </a>
+                    <dd className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white p-2">
+                      <Image
+                        src={report.imageUrl}
+                        alt={`Foto laporan: ${report.title}`}
+                        width={1200}
+                        height={900}
+                        unoptimized
+                        className="max-h-[480px] w-full rounded-lg object-contain"
+                      />
                     </dd>
                   </div>
                 )}
