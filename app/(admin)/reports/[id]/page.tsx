@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { StatusBadge } from "@/components/global/ui/status-badge";
@@ -7,6 +6,7 @@ import { BackendApiError, BackendConnectionError } from "@/features/auth/infrast
 import { requireAdminSession } from "@/features/auth/infrastructure/admin-session";
 import { getAdminReport } from "@/features/reports/infrastructure/reports-api";
 import { ReportStatusForm } from "@/features/reports/components/report-status-form";
+import { ReportImagePreview } from "@/features/reports/components/report-image-preview";
 
 export const metadata: Metadata = {
   title: "Detail laporan | SWMS Admin",
@@ -85,13 +85,9 @@ export default async function ReportDetailPage({ params }: PageProps<"/reports/[
                   <div className="sm:col-span-2">
                     <dt className="text-xs text-slate-500">Foto laporan</dt>
                     <dd className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white p-2">
-                      <Image
+                      <ReportImagePreview
                         src={`/api/admin/reports/${report.id}/image`}
                         alt={`Foto laporan: ${report.title}`}
-                        width={1200}
-                        height={900}
-                        unoptimized
-                        className="max-h-[480px] w-full rounded-lg object-contain"
                       />
                     </dd>
                   </div>

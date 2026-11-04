@@ -13,6 +13,8 @@ Aplikasi ini dibangun sebagai frontend Next.js dan berkomunikasi dengan backend 
 - Daftar laporan terbaru.
 - Daftar seluruh laporan dengan pencarian, filter status, dan pagination.
 - Halaman detail laporan.
+- Preview foto laporan dengan indikator pemuatan melalui server-side R2 proxy.
+- Indikator navigasi saat berpindah halaman admin, termasuk detail dan kembali ke daftar laporan.
 - Pembaruan status laporan dan catatan admin.
 - Daftar pengguna dengan pencarian, filter role, dan pagination.
 - Penanganan sesi kedaluwarsa dan error koneksi backend.

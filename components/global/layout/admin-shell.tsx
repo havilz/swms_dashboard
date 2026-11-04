@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AdminUser } from "@/features/auth/domain/admin-user";
 
 const navigationItems = [
@@ -68,6 +68,65 @@ export function AdminShell({
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutError, setLogoutError] = useState("");
+  const [navigationTarget, setNavigationTarget] = useState<string | null>(null);
+  const navigationTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isNavigating = navigationTarget !== null && navigationTarget !== pathname;
+
+  useEffect(() => {
+    function handlePopState() {
+      setNavigationTarget(window.location.pathname);
+      if (navigationTimeout.current) clearTimeout(navigationTimeout.current);
+      navigationTimeout.current = setTimeout(() => {
+        setNavigationTarget(null);
+        navigationTimeout.current = null;
+      }, 15_000);
+    }
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      if (navigationTimeout.current) clearTimeout(navigationTimeout.current);
+    };
+  }, []);
+
+  function handleNavigationClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const anchor = target.closest("a[href]");
+    if (
+      !(anchor instanceof HTMLAnchorElement) ||
+      anchor.target === "_blank" ||
+      anchor.hasAttribute("download")
+    ) {
+      return;
+    }
+
+    const destination = new URL(anchor.href);
+    if (
+      destination.origin !== window.location.origin ||
+      destination.pathname === pathname
+    ) {
+      return;
+    }
+
+    setNavigationTarget(destination.pathname);
+    if (navigationTimeout.current) clearTimeout(navigationTimeout.current);
+    navigationTimeout.current = setTimeout(() => {
+      setNavigationTarget(null);
+      navigationTimeout.current = null;
+    }, 15_000);
+  }
 
   async function logout() {
     setLogoutError("");
@@ -93,7 +152,10 @@ export function AdminShell({
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f6f3] p-0 lg:flex lg:h-screen lg:gap-2 lg:overflow-hidden lg:p-2">
+    <div
+      className="min-h-screen bg-[#f3f6f3] p-0 lg:flex lg:h-screen lg:gap-2 lg:overflow-hidden lg:p-2"
+      onClickCapture={handleNavigationClick}
+    >
       <aside className="hidden w-[228px] shrink-0 flex-col rounded-xl bg-[#17392d] px-3 py-3 text-[#eef4eb] lg:flex">
         <Link href="/dashboard" className="flex h-12 items-center gap-3 px-3" aria-label="SWMS dashboard">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#c3d8b9] text-sm font-bold text-[#17392d]">SW</span>
@@ -135,6 +197,12 @@ export function AdminShell({
       </aside>
 
       <div className="flex min-h-screen min-w-0 flex-1 flex-col bg-[#f7f8f2] lg:min-h-0 lg:rounded-2xl lg:border lg:border-[#d8e0d5]">
+        <div
+          aria-hidden="true"
+          className={`fixed inset-x-0 top-0 z-50 h-1 origin-left bg-emerald-700 transition-transform duration-200 ${
+            isNavigating ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
+          }`}
+        />
         <header className="flex min-h-16 items-center justify-between gap-4 border-b border-[#e1e7de] bg-[#f3f6f3] px-4 sm:px-6 lg:border-0 lg:bg-[#f7f8f2] lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <button
