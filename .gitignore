@@ -16,6 +16,11 @@
 # next.js
 /.next/
 /out/
+/graphify-out/
+
+# documentation
+/docs/**
+!/docs/API_DOCUMENTATION.md
 
 # production
 /build
