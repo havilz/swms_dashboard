@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import {
+  ADMIN_PROFILE_COOKIE,
   ADMIN_TOKEN_COOKIE,
 } from "@/features/auth/infrastructure/admin-session";
 import {
@@ -39,6 +40,14 @@ export async function POST() {
     : NextResponse.json({ message: "Logout berhasil." });
 
   result.cookies.set(ADMIN_TOKEN_COOKIE, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  result.cookies.set(ADMIN_PROFILE_COOKIE, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

@@ -91,7 +91,7 @@ Jika backend berjalan pada alamat berbeda, ubah `SWMS_API_BASE_URL` di `.env.loc
 2. Route server Next.js meneruskan request login ke backend API.
 3. Backend memvalidasi credential dan hak akses administrator.
 4. Token sesi disimpan pada cookie HttpOnly oleh server Next.js.
-5. Halaman dashboard menggunakan sesi tersebut untuk meminta data admin.
+5. Profil admin untuk shell disimpan dalam cookie HttpOnly yang ditandatangani dengan token, sehingga tidak memerlukan request validasi sesi terpisah pada setiap navigasi. Endpoint data tetap memvalidasi token di backend.
 6. Saat logout, sesi dicabut melalui backend dan cookie dihapus.
 
 Token sesi tidak dibaca langsung oleh JavaScript browser. Request halaman admin menggunakan route server Next.js sebagai perantara ke backend.
@@ -102,7 +102,6 @@ Dashboard menggunakan base URL dari `SWMS_API_BASE_URL` dan mengakses resource b
 
 - `auth/login` untuk autentikasi administrator.
 - `auth/logout` untuk mengakhiri sesi.
-- `auth/me` untuk memvalidasi sesi aktif.
 - `admin/dashboard` untuk ringkasan dashboard.
 - `admin/reports` untuk daftar dan filter laporan.
 - `admin/reports/{id}` untuk detail laporan.

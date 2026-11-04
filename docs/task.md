@@ -19,9 +19,11 @@ Membangun frontend admin Next.js terpisah yang menggunakan Laravel Admin API, de
 - [x] Hubungkan statistik dan laporan terbaru ke Admin API, lengkap dengan loading/error/empty states.
 - [x] Bangun daftar/filter laporan, detail laporan, dan alur perubahan status/catatan melalui Admin API.
 - [x] Bangun daftar dan filter user dari Admin API.
+- [x] Hindari request validasi sesi `auth/me` berulang pada navigasi; verifikasi profil bertanda tangan secara lokal dan biarkan endpoint admin memvalidasi token.
+- [x] Tambahkan loading state navigasi untuk halaman admin dan redirect saat token ditolak backend.
 - [ ] Lengkapi CRUD user jika endpoint dan kebutuhan produk sudah ditetapkan.
 - [ ] Tambahkan test untuk use case, API mapping/error, dan alur UI.
-- [ ] Verifikasi login dan alur Admin API dengan backend nyata.
+- [ ] Verifikasi login dan alur Admin API dengan backend nyata setelah deploy optimasi sesi.
 - [ ] Verifikasi responsive layout dan alur dashboard pada browser.
 - [x] Verifikasi `npx tsc --noEmit` dan `npm run build`.
-- [ ] Verifikasi `npm run lint`.
+- [x] Verifikasi `npm run lint`.

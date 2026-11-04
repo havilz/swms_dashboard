@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireAdminSession } from "@/features/auth/infrastructure/admin-session";
 import { BackendApiError, BackendConnectionError } from "@/features/auth/infrastructure/backend-api";
 import { getAdminUsers } from "@/features/users/infrastructure/users-api";
@@ -44,6 +45,9 @@ export default async function UsersPage({ searchParams }: { searchParams: Search
   );
 
   if (result.kind === "error") {
+    if (result.error instanceof BackendApiError && result.error.status === 401) {
+      redirect("/login?expired=1");
+    }
     if (!(result.error instanceof BackendConnectionError || result.error instanceof BackendApiError)) {
       throw result.error;
     }

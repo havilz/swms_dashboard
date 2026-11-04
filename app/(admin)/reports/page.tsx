@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { ReportFilters } from "@/features/reports/components/report-filters";
 import { ReportList } from "@/features/reports/components/report-list";
 import { reportStatuses, type ReportStatus } from "@/features/reports/domain/admin-report";
@@ -38,6 +39,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
     );
 
   if (result.kind === "error") {
+    if (result.error instanceof BackendApiError && result.error.status === 401) {
+      redirect("/login?expired=1");
+    }
     if (!(result.error instanceof BackendConnectionError || result.error instanceof BackendApiError)) {
       throw result.error;
     }

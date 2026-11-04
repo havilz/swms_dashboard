@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { isRecord, parseAdminUser } from "@/features/auth/domain/admin-user";
 import {
+  ADMIN_PROFILE_COOKIE,
   ADMIN_TOKEN_COOKIE,
   ADMIN_TOKEN_MAX_AGE,
+  createAdminProfileCookie,
 } from "@/features/auth/infrastructure/admin-session";
 import {
   BackendApiError,
@@ -103,6 +105,13 @@ export async function POST(request: Request) {
 
     const result = NextResponse.json({ data: { user } });
     result.cookies.set(ADMIN_TOKEN_COOKIE, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: ADMIN_TOKEN_MAX_AGE,
+    });
+    result.cookies.set(ADMIN_PROFILE_COOKIE, createAdminProfileCookie(token, user), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

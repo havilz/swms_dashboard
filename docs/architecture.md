@@ -50,4 +50,4 @@ Route aktual mengikuti keputusan navigasi produk dan kontrak endpoint backend.
 
 ## Autentikasi dan konfigurasi
 
-`SWMS_API_BASE_URL` adalah alamat API untuk server Next.js, bukan secret. Browser hanya berbicara ke route handler/BFF di origin yang sama. Admin token disimpan di cookie `HttpOnly`, `Secure` pada production, dan `SameSite=Lax`; jangan pernah menyimpan token di `localStorage` atau mengirimkannya ke client components.
+`SWMS_API_BASE_URL` adalah alamat API untuk server Next.js, bukan secret. Browser hanya berbicara ke route handler/BFF di origin yang sama. Admin token disimpan di cookie `HttpOnly`, `Secure` pada production, dan `SameSite=Lax`; jangan pernah menyimpan token di `localStorage` atau mengirimkannya ke client components. Profil admin untuk layout disimpan dalam cookie `HttpOnly` yang tanda tangannya diverifikasi lokal menggunakan token. Ini menghindari request `auth/me` di setiap navigasi; setiap endpoint admin tetap memverifikasi token dan role di backend.

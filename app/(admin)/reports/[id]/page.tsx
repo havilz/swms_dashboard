@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { StatusBadge } from "@/components/global/ui/status-badge";
 import { BackendApiError, BackendConnectionError } from "@/features/auth/infrastructure/backend-api";
@@ -35,6 +35,9 @@ export default async function ReportDetailPage({ params }: PageProps<"/reports/[
   );
 
   if (result.kind === "error") {
+    if (result.error instanceof BackendApiError && result.error.status === 401) {
+      redirect("/login?expired=1");
+    }
     if (result.error instanceof BackendApiError && result.error.status === 404) notFound();
     if (!(result.error instanceof BackendConnectionError || result.error instanceof BackendApiError)) {
       throw result.error;

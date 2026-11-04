@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { DashboardOverview } from "@/features/dashboard/components/dashboard-overview";
 import { requireAdminSession } from "@/features/auth/infrastructure/admin-session";
 import {
@@ -25,6 +26,7 @@ export default async function DashboardPage() {
       isConnectionError = true;
       errorMessage = "Backend tidak dapat dihubungi. Periksa koneksi layanan, lalu muat ulang halaman.";
     } else if (error instanceof BackendApiError) {
+      if (error.status === 401) redirect("/login?expired=1");
       errorMessage = error.message;
     } else {
       throw error;
